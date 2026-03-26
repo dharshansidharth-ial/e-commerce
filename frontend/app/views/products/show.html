@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en" ng-app="ProductApp">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Detail</title>
+    <link rel="stylesheet" href="../../assets/css/style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  </head>
+
+  <!--
+  KEY FIX 1: ng-controller on <body> so it wraps everything,
+             including the ng-cloak directive.
+  KEY FIX 2: ng-cloak on .product-page hides raw {{}} until
+             Angular compiles — much safer than ng-if="product"
+             which blocks rendering entirely if $scope.product
+             is set asynchronously.
+-->
+  <body ng-controller="ProductDetailController">
+    <div class="product-page">
+      <div class="product-page-inner" ng-cloak>
+        <!-- ── TWO-COLUMN LAYOUT ── -->
+        <div class="product-layout">
+          <!-- IMAGE -->
+          <div class="product-image-box">
+            <div class="discount-badge">25% OFF</div>
+            <img
+              ng-src="{{product.image_url || '../assets/images/no_image.png'}}"
+              alt="{{product.name}}"
+              class="product-image"
+            />
+          </div>
+
+          <!-- DETAILS -->
+          <div class="product-info">
+            <h1 class="product-title">{{product.name}}</h1>
+
+            <!-- Rating -->
+            <div class="rating">
+              <span class="stars-row">
+                <span ng-repeat="i in [1,2,3,4,5]">
+                  <span ng-if="i <= averageRating">★</span>
+                  <span ng-if="i > averageRating">☆</span>
+                </span>
+              </span>
+              <span class="review-count">({{reviews.length}} reviews)</span>
+            </div>
+
+            <p class="description">{{product.description}}</p>
+
+            <!-- Price -->
+            <div class="price-section">
+              <span class="old-price">₹ {{product.price | number:0}}</span>
+              <span class="new-price"
+                >₹ {{product.price * 0.75 | number:0}}</span
+              >
+            </div>
+            <p class="discount-text">✓ You save 25%</p>
+
+            <!-- Cart -->
+            <div class="cart-section" ng-if="isCustomer">
+              <input
+                type="number"
+                min="1"
+                ng-model="quantity"
+                class="qty-input"
+              />
+              <button
+                class="add-cart-btn"
+                ng-click="addToCart(product , quantity)"
+                ng-disabled="product.stock === 0"
+              >
+                <svg
+                  class="btn-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"
+                  />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <path d="M16 10a4 4 0 0 1-8 0" />
+                </svg>
+                <span ng-if="product.stock > 0">Add to Cart</span>
+                <span ng-if="product.stock === 0">Out of Stock</span>
+              </button>
+            </div>
+            <p class="discount-text" ng-if="!isCustomer">
+              Buying and reviews are available only for customer accounts.
+            </p>
+          </div>
+        </div>
+
+        <!-- ── CUSTOMER REVIEWS ── -->
+        <div class="reviews">
+          <h2 class="section-heading">Customer Reviews</h2>
+
+          <p class="no-reviews" ng-if="reviews.length === 0">
+            No reviews yet — be the first!
+          </p>
+
+          <div class="review-card" ng-repeat="review in reviews">
+            <div class="review-header">
+              <span class="stars">
+                <span ng-repeat="i in [1,2,3,4,5]">
+                  <span ng-if="i <= review.rating">★</span>
+                  <span ng-if="i > review.rating">☆</span>
+                </span>
+              </span>
+              <span class="review-user">{{review.user_email}}</span>
+            </div>
+            <p>{{review.comment}}</p>
+          </div>
+        </div>
+
+        <!-- ── ADD REVIEW ── -->
+        <div class="review-form" ng-if="isCustomer">
+          <h3>Leave a Review</h3>
+
+          <div>
+            <label class="form-label">Your Rating</label>
+            <select ng-model="newReview.rating" class="rating-select">
+              <option value="5">5 ★★★★★</option>
+              <option value="4">4 ★★★★☆</option>
+              <option value="3">3 ★★★☆☆</option>
+              <option value="2">2 ★★☆☆☆</option>
+              <option value="1">1 ★☆☆☆☆</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="form-label">Your Review</label>
+            <textarea
+              ng-model="newReview.comment"
+              placeholder="Share your experience with this product..."
+              class="review-textarea"
+            ></textarea>
+          </div>
+
+          <button class="submit-review-btn" ng-click="submitReview()">
+            <span>Submit Review</span>
+          </button>
+        </div>
+      </div>
+      <!-- /.product-page-inner -->
+    </div>
+    <!-- /.product-page -->
+  </body>
+</html>

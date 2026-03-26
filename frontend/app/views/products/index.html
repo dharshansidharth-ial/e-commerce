@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="ShopApp">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop — Products</title>
+
+  <!-- <link rel="stylesheet" href="products.css"/> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-controller="ProductsController">
+<div class="products-page">
+
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <p class="page-header__eyebrow">Curated Collection</p>
+    <h1 class="page-header__title">Our <em>Products</em></h1>
+    <div class="page-header__rule"></div>
+  </header>
+
+  <!-- PRODUCT GRID -->
+  <div class="products-container" ng-cloak >
+
+    <div ng-repeat="product in products track by product.id" class="product-card">
+
+      <!-- IMAGE -->
+      <div class="product-image">
+        <img
+          ng-src="{{product.image_url || 'assets/images/no_image.png'}}"
+          alt="{{product.name}}"/>
+
+        <!-- Out-of-stock overlay -->
+        <div class="oos-overlay" ng-if="product.stock == 0">
+          <span class="oos-badge">Out of Stock</span>
+        </div>
+      </div>
+
+      <!-- INFO -->
+      <div class="product-info">
+        <h3 class="product-name">{{ product.name }}</h3>
+        <p class="product-description">{{ product.description }}</p>
+
+        <div class="product-bottom">
+          <p class="product-price">
+            <span class="currency">₹</span>{{ product.price | number:0 }}
+          </p>
+        </div>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <!-- ACTIONS -->
+      <div class="product-actions">
+        <button class="btn view-btn" ng-click="productView(product)">
+          View
+        </button>
+        <button
+          ng-if="isCustomer"
+          class="btn cart-btn"
+          ng-click="addToCart(product)"
+          ng-disabled="product.stock == 0">
+          <span>Add to Cart</span>
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>

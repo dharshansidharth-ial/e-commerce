@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en" ng-app="app">
+  <head>
+    <meta charset="UTF-8" />
+    <title>ShopSphere</title>
+
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+  </head>
+
+  <body>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <div class="navbar" ng-controller="NavbarController">
+      <div class="nav-left">
+        <div class="menu-container">
+          <button
+            class="menu-toggle"
+            ng-if="loggedIn"
+            ng-click="toggleMenu($event)"
+          >
+            <span class="ham-line"></span>
+            <span class="ham-line"></span>
+            <span class="ham-line"></span>
+          </button>
+
+          <div class="dropdown-menu" ng-show="menuOpen && loggedIn">
+            <a href="#!/products" ng-click="closeMenu()">Products</a>
+            <a href="#!/cart" ng-if="isCustomer()" ng-click="closeMenu()">Cart</a>
+            <a href="#!/profile" ng-if="isCustomer()" ng-click="closeMenu()">Profile</a>
+            <a href="#!/orders" ng-if="isCustomer()" ng-click="closeMenu()">Orders</a>
+            <a href="#!/admin" ng-if="isAdmin()" ng-click="closeMenu()">Admin</a>
+            <a href="#!/seller" ng-if="isSeller()" ng-click="closeMenu()">Seller</a>
+          </div>
+        </div>
+
+        <a href="#!/products" class="brand">ShopSphere</a>
+      </div>
+
+      <div class="nav-right">
+        <span ng-if="loggedIn" class="logout-wrapper">
+          <a title="Logout" href="" ng-click="logout()" class="logout-btn">
+            <img
+              src="/assets/images/logout.png"
+              alt="Logout"
+              class="logout-icon"
+            />
+          </a>
+        </span>
+
+        <span ng-if="!loggedIn" class="auth-links">
+          <a href="#!/login">Login</a>
+          <a href="#!/register">Register</a>
+          <a href="#!/seller/login">Seller Login</a>
+          <a href="#!/admin/login">Admin Login</a>
+        </span>
+      </div>
+    </div>
+
+    <div class="main-container">
+      <ng-view></ng-view>
+    </div>
+
+    <script src="app/app.js"></script>
+    <script src="app/services/auth.service.js"></script>
+    <script src="app/services/product.service.js"></script>
+    <script src="app/services/cart.service.js"></script>
+    <script src="app/services/order.service.js"></script>
+    <script src="app/services/phone.service.js"></script>
+    <script src="app/services/address.service.js"></script>
+    <script src="app/services/phone.service.js"></script>
+    <script src="app/services/admin.service.js"></script>
+    <script src="app/services/seller.service.js"></script>
+
+    <script src="app/controllers/auth.controller.js"></script>
+    <script src="app/controllers/navbar.controller.js"></script>
+    <script src="app/controllers/user.controller.js"></script>
+    <script src="app/controllers/products.controller.js"></script>
+    <script src="app/controllers/productDetail.controller.js"></script>
+    <script src="app/controllers/cart.controller.js"></script>
+    <script src="app/controllers/checkout.controller.js"></script>
+    <script src="app/controllers/order.controller.js"></script>
+    <script src="app/controllers/admin.controller.js"></script>
+    <script src="app/controllers/seller.controller.js"></script>
+  </body>
+</html>

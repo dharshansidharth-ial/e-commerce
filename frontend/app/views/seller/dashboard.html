@@ -1,0 +1,126 @@
+<div class="admin-page" ng-controller="SellerController">
+  <div class="admin-hero">
+    <div>
+      <h1>Seller Dashboard</h1>
+      <p>Create products, track reviews on your listings, and monitor the revenue your catalog generates.</p>
+    </div>
+
+    <div class="admin-actions-top">
+      <span class="admin-badge" ng-if="currentSeller">{{ currentSeller.email }}</span>
+      <button class="btn outline" ng-click="logoutSeller()">Logout</button>
+    </div>
+  </div>
+
+  <div class="admin-alert error-message" ng-if="error">{{ error }}</div>
+  <div class="admin-alert success-message" ng-if="success">{{ success }}</div>
+  <div class="admin-loading" ng-if="loading">Loading seller account...</div>
+
+  <div class="admin-grid" ng-if="!loading && currentSeller">
+    <section class="admin-section">
+      <div class="admin-section-head">
+        <h2>{{ formMode === 'edit' ? 'Edit Product' : 'Create Product' }}</h2>
+        <button class="btn secondary-btn" ng-if="formMode === 'edit'" ng-click="resetProductForm()">Cancel Edit</button>
+      </div>
+
+      <form class="admin-form" ng-submit="submitProduct()">
+        <input type="text" ng-model="productForm.name" placeholder="Product name" required />
+        <textarea ng-model="productForm.description" placeholder="Description" required></textarea>
+        <input type="number" ng-model="productForm.price" placeholder="Price" min="0" step="0.01" required />
+        <input type="number" ng-model="productForm.stock" placeholder="Stock" min="0" required />
+        <input type="text" ng-model="productForm.image_url" placeholder="Image URL" />
+
+        <select ng-model="productForm.catalog_category_id" required>
+          <option value="">Select category</option>
+          <option ng-repeat="category in categories" ng-value="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+
+        <label class="admin-checkbox">
+          <input type="checkbox" ng-model="productForm.active" />
+          <span>List as active</span>
+        </label>
+
+        <button type="submit" class="btn-primary">
+          {{ formMode === 'edit' ? 'Update Product' : 'Create Product' }}
+        </button>
+      </form>
+    </section>
+
+    <section class="admin-section admin-span-2">
+      <div class="admin-section-head">
+        <h2>Revenue Snapshot</h2>
+        <span>Status: {{ currentSeller.seller_status }}</span>
+      </div>
+
+      <div class="admin-table-list">
+        <div class="admin-card-row">
+          <div>
+            <h3>Total Revenue</h3>
+            <p>₹{{ metrics.revenue | number:2 }}</p>
+          </div>
+        </div>
+        <div class="admin-card-row">
+          <div>
+            <h3>Products Live</h3>
+            <p>{{ metrics.active_products_count }} active of {{ metrics.products_count }} total</p>
+          </div>
+        </div>
+        <div class="admin-card-row">
+          <div>
+            <h3>Reviews Received</h3>
+            <p>{{ metrics.reviews_count }} reviews across your listings</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-section admin-span-3">
+      <div class="admin-section-head">
+        <h2>Your Products</h2>
+        <span>{{ products.length }} total</span>
+      </div>
+
+      <div class="admin-table-list">
+        <div class="admin-card-row" ng-repeat="product in products track by product.id">
+          <div>
+            <h3>{{ product.name }}</h3>
+            <p>{{ product.description }}</p>
+            <div class="admin-meta-row">
+              <span>Category: {{ product.category.name }}</span>
+              <span>Price: ₹{{ product.price }}</span>
+              <span>Stock: {{ product.stock }}</span>
+              <span>Revenue: ₹{{ product.revenue | number:2 }}</span>
+              <span>Reviews: {{ product.reviews_count }}</span>
+              <span>Status: {{ product.active ? 'Active' : 'Inactive' }}</span>
+            </div>
+          </div>
+          <div class="admin-card-actions">
+            <button class="view-btn" ng-click="startEditProduct(product)">Edit</button>
+            <button class="danger-btn" ng-click="deleteProduct(product.id)">Delete</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-section admin-span-3">
+      <div class="admin-section-head">
+        <h2>Product Reviews</h2>
+        <span>{{ reviews.length }} total</span>
+      </div>
+
+      <div class="admin-table-list">
+        <div class="admin-card-row" ng-repeat="review in reviews track by review.id">
+          <div>
+            <h3>{{ review.product.name }} · {{ review.user.email }}</h3>
+            <div class="admin-meta-row">
+              <span>Rating: {{ review.rating }}/5</span>
+              <span>{{ review.created_at | date:'d MMM yyyy · h:mm a' }}</span>
+            </div>
+            <p>{{ review.comment }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="CheckoutApp">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout</title>
+  <link rel="stylesheet" href="../../assets/css/style.css"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-controller="CheckoutController">
+
+<div class="checkout-page" ng-cloak>
+
+  <h2 class="checkout-title">Checkout</h2>
+
+  <div class="checkout-layout">
+
+    <!-- ── LEFT ── -->
+    <div class="checkout-left">
+
+      <!-- ADDRESS -->
+      <div class="checkout-section">
+        <div class="section-title">
+          Delivery Address
+          <button class="add-btn" ng-click="ui.showAddressForm = !ui.showAddressForm">
+            + Add Address
+          </button>
+        </div>
+
+        <label
+          class="address-card"
+          ng-repeat="address in addresses"
+          ng-class="{'selected-address': selectedAddress == address.id}"
+        >
+          <input
+            type="radio"
+            name="address"
+            ng-model="$parent.selectedAddress"
+            ng-value="address.id"
+          />
+          <div class="address-content">
+            <p class="addr-main">{{address.line1}}</p>
+            <p class="addr-sub">{{address.city}}, {{address.country}}</p>
+          </div>
+          <button
+            class="delete-btn"
+            ng-click="deleteAddress($event, address.id)"
+            title="Remove address"
+          >✕ Remove</button>
+        </label>
+
+        <div class="form-box" ng-if="ui.showAddressForm">
+          <input type="text" placeholder="Address Line"  ng-model="newAddress.line1"/>
+          <input type="text" placeholder="City"          ng-model="newAddress.city"/>
+          <input type="text" placeholder="Country"       ng-model="newAddress.country"/>
+          <div class="form-actions">
+            <button class="save-btn" ng-click="addAddress()">Save</button>
+            <button class="cancel-btn" ng-click="ui.showAddressForm = false">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHONE -->
+      <div class="checkout-section">
+        <div class="section-title">
+          Phone Number
+          <button class="add-btn" ng-click="ui.showPhoneForm = !ui.showPhoneForm">
+            + Add Phone
+          </button>
+        </div>
+
+        <label
+          class="phone-card"
+          ng-repeat="phone in phoneNumbers"
+          ng-class="{'selected-phone': selectedPhone == phone.id}"
+        >
+          <input
+            type="radio"
+            name="phone"
+            ng-model="$parent.selectedPhone"
+            ng-value="phone.id"
+          />
+          <div class="phone-content">
+            <div class="phone-row">
+              <span class="phone-number">{{phone.phone_number}}</span>
+              <span class="verified-badge"   ng-if="phone.verified">Verified</span>
+              <span class="unverified-badge" ng-if="!phone.verified">Not Verified</span>
+            </div>
+          </div>
+          <button
+            class="delete-btn"
+            ng-click="deletePhone($event, phone.id)"
+            title="Remove phone"
+          >✕ Remove</button>
+        </label>
+
+        <div class="form-box" ng-if="ui.showPhoneForm">
+          <input type="text" placeholder="Phone Number" ng-model="newPhone.phone_number"/>
+          <div class="form-actions">
+            <button class="save-btn" ng-click="addPhone()">Save</button>
+            <button class="cancel-btn" ng-click="ui.showPhoneForm = false">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT ── -->
+    <div class="checkout-right">
+      <div class="checkout-section">
+        <div class="section-title">Order Summary</div>
+
+        <div class="checkout-item" ng-repeat="item in cartItems">
+          <div class="item-info">
+            <p class="item-name">{{item.product.name}}</p>
+            <p class="item-qty">Qty: {{item.quantity}}</p>
+          </div>
+          <div class="item-price-col">
+            <p class="item-unit">₹ {{item.product.price | number:0}}</p>
+            <p class="item-total">₹ {{item.quantity * item.product.price | number:0}}</p>
+          </div>
+        </div>
+
+        <div class="order-total-box">
+          <span>Total</span>
+          <span class="total-amt">₹ {{total | number:0}}</span>
+        </div>
+
+        <button
+          class="place-order-btn"
+          ng-click="placeOrder()"
+          ng-disabled="!selectedAddress || !selectedPhone"
+        >
+          <span class="btn-label">Place Order</span>
+        </button>
+
+        <p class="secure-note">🔒 Secure checkout · Free 30-day returns</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DEMO CONTROLLER — remove in production -->
+<script>
+  angular.module('CheckoutApp', [])
+    .controller('CheckoutController', ['$scope', function($scope) {
+
+      $scope.addresses = [
+        { id: 1, line1: '12, MG Road, Indiranagar', city: 'Bengaluru', country: 'India' },
+        { id: 2, line1: '45, Linking Road, Bandra', city: 'Mumbai',    country: 'India' },
+      ];
+
+      $scope.phoneNumbers = [
+        { id: 1, phone_number: '+91 98765 43210', verified: true  },
+        { id: 2, phone_number: '+91 91234 56789', verified: false },
+      ];
+
+      $scope.cartItems = [
+        { product: { name: 'Mechanical Keyboard', price: 3499 }, quantity: 1 },
+        { product: { name: 'USB-C Hub',           price: 1299 }, quantity: 2 },
+      ];
+
+      $scope.total = $scope.cartItems.reduce(
+        (s, i) => s + i.quantity * i.product.price, 0
+      );
+
+      $scope.selectedAddress = null;
+      $scope.selectedPhone   = null;
+      $scope.ui              = { showAddressForm: false, showPhoneForm: false };
+      $scope.newAddress      = {};
+      $scope.newPhone        = {};
+
+      $scope.addAddress = function() {
+        if (!$scope.newAddress.line1) return;
+        $scope.addresses.push({
+          id:      Date.now(),
+          line1:   $scope.newAddress.line1,
+          city:    $scope.newAddress.city    || '',
+          country: $scope.newAddress.country || '',
+        });
+        $scope.newAddress            = {};
+        $scope.ui.showAddressForm    = false;
+      };
+
+      $scope.deleteAddress = function($event, id) {
+        $event.preventDefault();   // stop label from triggering radio
+        $event.stopPropagation();
+        $scope.addresses = $scope.addresses.filter(a => a.id !== id);
+        if ($scope.selectedAddress === id) $scope.selectedAddress = null;
+      };
+
+      $scope.addPhone = function() {
+        if (!$scope.newPhone.phone_number) return;
+        $scope.phoneNumbers.push({
+          id:           Date.now(),
+          phone_number: $scope.newPhone.phone_number,
+          verified:     false,
+        });
+        $scope.newPhone         = {};
+        $scope.ui.showPhoneForm = false;
+      };
+
+      $scope.deletePhone = function($event, id) {
+        $event.preventDefault();
+        $event.stopPropagation();
+        $scope.phoneNumbers = $scope.phoneNumbers.filter(p => p.id !== id);
+        if ($scope.selectedPhone === id) $scope.selectedPhone = null;
+      };
+
+      $scope.placeOrder = function() {
+        if (!$scope.selectedAddress || !$scope.selectedPhone) return;
+        alert('Order placed successfully!');
+      };
+    }]);
+</script>
+
+</body>
+</html>

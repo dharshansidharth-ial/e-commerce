@@ -1,0 +1,78 @@
+<div class="profile-wrapper" ng-if="!user">
+  <div class="card loading-card">
+    <p>Loading profile...</p>
+  </div>
+</div>
+
+<div class="profile-wrapper" ng-if="user">
+
+  <div class="card">
+    <h2>Account Settings</h2>
+
+    <!-- Profile Section -->
+    <div class="section">
+      <h3>Profile Information</h3>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" ng-model="user.email" />
+      </div>
+
+      <div class="form-group">
+        <label>Role</label>
+        <input type="text" ng-model="user.role" />
+      </div>
+
+      <button class="btn primary" ng-click="updateUser()">
+        Save Changes
+      </button>
+    </div>
+
+    <!-- Password Section -->
+    <div class="section">
+      <h3>Change Password</h3>
+
+      <div class="form-group">
+        <label>Current Password</label>
+        <input type="password" ng-model="passwordData.current_password" />
+      </div>
+
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="password" ng-model="passwordData.new_password" />
+      </div>
+
+      <div class="form-group">
+        <label>Confirm New Password</label>
+        <input type="password" ng-model="passwordData.new_password_confirmation" />
+      </div>
+
+      <button class="btn secondary" ng-click="updatePassword()">
+        Update Password
+      </button>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="section danger-zone">
+      <h3>Danger Zone</h3>
+
+      <button class="btn danger" ng-click="deleteUser()">
+        Delete Account
+      </button>
+
+      <button class="btn outline" ng-click="logout()">
+        Logout
+      </button>
+    </div>
+
+    <!-- Messages -->
+    <div class="message error" ng-if="error">
+      {{ error }}
+    </div>
+
+    <div class="message success" ng-if="success">
+      {{ success }}
+    </div>
+
+  </div>
+</div>

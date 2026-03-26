@@ -1,0 +1,51 @@
+<div class="auth-wrapper" ng-controller="SellerController">
+  <div class="auth-left">
+    <div class="brand-content">
+      <h1 class="brand-title">Sell With ShopSphere</h1>
+      <p class="brand-subtitle">
+        Access your seller space to manage your storefront and grow your business.
+      </p>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-card">
+      <h2 class="auth-heading">Seller Login</h2>
+      <p class="auth-subtext">Use your seller account to enter the seller dashboard.</p>
+
+      <form ng-submit="login()">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" ng-model="credentials.email" required />
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" ng-model="credentials.password" required />
+        </div>
+
+        <div class="error-message" ng-if="error">
+          {{ error }}
+        </div>
+
+        <button type="submit" class="btn-primary">
+          Login as Seller
+        </button>
+      </form>
+
+      <p class="auth-footer">
+        Need a seller account?
+        <a href="#!/register">Create Account</a>
+      </p>
+
+      <p class="auth-footer">
+        Seller accounts require admin approval before access is enabled.
+      </p>
+
+      <p class="auth-footer">
+        Looking for customer login?
+        <a href="#!/login">Customer Login</a>
+      </p>
+    </div>
+  </div>
+</div>

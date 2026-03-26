@@ -1,0 +1,74 @@
+<div class="auth-wrapper">
+  <div class="auth-left">
+    <div class="brand-content">
+      <h1 class="brand-title">Join ShopSphere</h1>
+      <p class="brand-subtitle">
+        One account for premium shopping and secure checkout.
+      </p>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-card wide-card">
+      <h2 class="auth-heading">Create Account</h2>
+      <p class="auth-subtext">Enter your details to get started</p>
+
+      <form ng-submit="register()" class="registration-form">
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label>Email Address</label>
+            <input
+              type="email"
+              ng-model="user.email"
+              placeholder="email@example.com"
+              required
+            />
+          </div>
+          <div class="form-group flex-1">
+            <label>Role</label>
+            <div class="select-wrapper">
+              <select ng-model="user.role" class="custom-select" required>
+                <option value="" disabled selected>Select</option>
+                <option value="customer">Customer</option>
+                <option value="seller">Seller</option>
+              </select>
+              <span class="select-arrow"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              ng-model="user.password"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>Confirm</label>
+            <input
+              type="password"
+              ng-model="user.password_confirmation"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="error-message" ng-if="error">{{ error }}</div>
+
+        <button type="submit" class="btn-primary btn-block">
+          Create My Account
+        </button>
+      </form>
+
+      <p class="auth-footer">
+        Already have an account?
+        <a href="#!/login">Sign In</a>
+      </p>
+    </div>
+  </div>
+</div>

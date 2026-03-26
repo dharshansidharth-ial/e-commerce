@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="OrderApp">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Detail</title>
+  <link rel="stylesheet" href="../../assets/css/style.css"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-controller="OrderController">
+
+<div class="order-detail-wrapper" ng-cloak>
+
+  <!-- Back button -->
+  <button class="back-btn" ng-click="goBack()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+    All Orders
+  </button>
+
+  <div class="order-detail-wrap">
+
+    <!-- ── TITLE ROW ── -->
+    <div class="title-row">
+      <div class="title-left">
+        <h1>Order #{{ order.id }}</h1>
+        <span class="status-pill" ng-class="order.status">
+          {{ order.status | capitalize }}
+        </span>
+      </div>
+
+      <button
+        class="cancel-order-btn"
+        ng-if="order.status === 'pending'"
+        ng-click="confirmCancel()"
+        ng-disabled="cancelling"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M15 9l-6 6M9 9l6 6"/>
+        </svg>
+        <span ng-if="!cancelling">Cancel Order</span>
+        <span ng-if="cancelling">Cancelling…</span>
+      </button>
+    </div>
+
+    <!-- ── CANCEL CONFIRM DIALOG ── -->
+    <div class="cancel-confirm-box" ng-if="showCancelConfirm">
+      <p class="cancel-confirm-text">
+        Are you sure you want to cancel <strong>Order #{{ order.id }}</strong>?
+      </p>
+      <div class="cancel-confirm-actions">
+        <button class="cancel-confirm-yes" ng-click="cancelOrder(order)">
+          Yes, Cancel Order
+        </button>
+        <button class="cancel-confirm-no" ng-click="hideCancelConfirm()">
+          Keep Order
+        </button>
+      </div>
+    </div>
+
+    <div class="od-card">
+      <div class="meta-strip">
+        <div class="meta-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <path d="M16 2v4M8 2v4M3 10h18"/>
+          </svg>
+          Placed
+          <strong>{{ order.created_at | date:'d MMM yyyy, h:mm a' }}</strong>
+        </div>
+        <div class="meta-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+          Updated
+          <strong>{{ order.updated_at | date:'d MMM yyyy, h:mm a' }}</strong>
+        </div>
+        <div class="meta-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+          </svg>
+          Order ID <strong>#{{ order.id }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ORDER ITEMS ── -->
+    <div class="od-card">
+      <div class="od-card-head">
+        <span>Order Items</span>
+      </div>
+
+      <div class="od-item-row"
+           ng-repeat="item in order.order_items track by item.id">
+        <div class="item-left">
+          <div class="item-avatar">P{{ item.catalog_product_id }}</div>
+          <div>
+            <div class="iname">
+              {{ item.product.name || 'Product #' + item.catalog_product_id }}
+            </div>
+          </div>
+        </div>
+        <div class="item-right">
+          <div class="iprice">₹ {{ item.price }}</div>
+          <div class="iunit">Qty: {{ item.quantity }}</div>
+        </div>
+      </div>
+
+      <div class="od-total-row">
+        <span>₹ {{ order.total_amount }}</span>
+      </div>
+    </div>
+
+    <!-- ── DELIVERY DETAILS ── -->
+    <div class="od-card">
+  <div class="od-card-head">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M8 1.5C5.5 1.5 3.5 3.5 3.5 6c0 3.5 4.5 8.5 4.5 8.5s4.5-5 4.5-8.5c0-2.5-2-4.5-4.5-4.5zm0 6a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" fill="currentColor"/>
+    </svg>
+    <span>Delivery details</span>
+  </div>
+
+  <div class="info-grid">
+
+    <!-- Address cell -->
+    <div class="info-cell" ng-if="order.address">
+      <div class="info-cell-header">
+        <div class="info-label">Delivery address</div>
+      </div>
+      <div class="info-val">{{ order.address.line1 }}</div>
+      <div class="info-sub">{{ order.address.city }}</div>
+    </div>
+
+    <!-- Phone cell -->
+    <div class="info-cell" ng-if="order.phone_number">
+      <div class="info-cell-header">
+        <div class="info-label">Phone number</div>
+      </div>
+      <div class="info-val-row">
+        <span class="info-val">{{ order.phone_number.phone_number }}</span>
+        <span class="verified-badge" ng-if="order.phone_number.is_verified">Verified</span>
+        <span class="unverified-badge" ng-if="!order.phone_number.is_verified">Unverified</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Address edit panel -->
+  <div class="edit-panel" ng-if="editAddressMode">
+    <div class="edit-panel-title">Select a delivery address</div>
+
+    <div class="edit-options">
+      <label class="edit-option" ng-repeat="addr in addresses">
+        <input type="radio"
+               ng-model="$parent.selectedAddress"
+               ng-value="addr.id" />
+        <div class="edit-option-body">
+          <div class="edit-option-main">{{ addr.line1 }}</div>
+          <div class="edit-option-sub">{{ addr.city }}</div>
+        </div>
+      </label>
+    </div>
+
+    <div class="edit-actions">
+      <button class="save-btn" ng-click="updateAddress()">Save</button>
+      <button class="cancel-btn" ng-click="editAddressMode = false">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Phone edit panel -->
+  <div class="edit-panel" ng-if="editPhoneMode">
+    <div class="edit-panel-title">Select a phone number</div>
+
+    <div class="edit-options">
+      <label class="edit-option" ng-repeat="ph in phoneNumbers">
+        <input type="radio"
+               ng-model="$parent.selectedPhone"
+               ng-value="ph.id" />
+        <div class="edit-option-body">
+          <div class="edit-option-main">{{ ph.phone_number }}</div>
+          <span class="verified-badge" ng-if="ph.is_verified">Verified</span>
+          <span class="unverified-badge" ng-if="!ph.is_verified">Unverified</span>
+        </div>
+      </label>
+    </div>
+
+    <div class="edit-actions">
+      <button class="save-btn" ng-click="updatePhone()">Save</button>
+      <button class="cancel-btn" ng-click="editPhoneMode = false">Cancel</button>
+    </div>
+  </div>
+
+</div>
+  </div>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

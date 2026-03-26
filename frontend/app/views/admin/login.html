@@ -1,0 +1,34 @@
+<div class="auth-wrapper admin-auth-shell" ng-controller="AdminController">
+  <div class="auth-left admin-auth-left">
+    <div class="brand-content">
+      <p class="page-header__eyebrow">Management Access</p>
+      <h1 class="brand-title">Admin Console</h1>
+      <p class="brand-subtitle">
+        Review products, orders, and customer feedback from one place.
+      </p>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-card">
+      <h2 class="auth-heading">Admin Login</h2>
+      <p class="auth-subtext">Only admin accounts can enter this dashboard.</p>
+
+      <form ng-submit="login()">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" ng-model="credentials.email" required />
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" ng-model="credentials.password" required />
+        </div>
+
+        <div class="error-message" ng-if="error">{{ error }}</div>
+
+        <button type="submit" class="btn-primary">Login As Admin</button>
+      </form>
+    </div>
+  </div>
+</div>

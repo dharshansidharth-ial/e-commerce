@@ -1,0 +1,56 @@
+<div ng-controller="CartController" class="cart-wrapper">
+  <div ng-if="error" class="cart-error-banner">
+    <span class="error-icon">⚠</span>
+    <span class="error-text">{{ error }}</span>
+  </div>
+
+  <div ng-if="cartItems.length > 0" class="cart-card">
+    <h2>Your Shopping Cart</h2>
+
+    <!-- <div class="error" ng-if="error">{{ error }}</div> -->
+
+    <table class="cart-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Qty</th>
+          <th>Price</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="item in cartItems track by item.id">
+          <td>{{ item.product.name }}</td>
+          <td>
+            <input
+              type="number"
+              min="1"
+              ng-model="item.quantity"
+              ng-change="updateQuantity(item)"
+            />
+          </td>
+          <td>₹ {{ item.product.price * item.quantity | number:2 }}</td>
+          <td>
+            <button class="btn danger" ng-click="removeItem(item.id)">
+              Remove
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- {{cartItems[0]}} -->
+
+    <div class="cart-summary">
+      <p><strong>Total:</strong> ₹ {{ total }}</p>
+      <button class="btn primary" ng-click="proceedToCheckout()">
+        Proceed to Checkout
+      </button>
+    </div>
+  </div>
+
+  <div ng-if="cartItems.length == 0" class="empty-cart">
+    <p>Your cart is empty!</p>
+    <a href="#!/products" class="btn primary">Shop Now</a>
+  </div>
+</div>

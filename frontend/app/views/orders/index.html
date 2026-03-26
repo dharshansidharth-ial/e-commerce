@@ -1,0 +1,154 @@
+<div ng-controller="OrderController" class="orders-wrapper">
+  <!-- <h1>{{orders}}</h1> -->
+
+  <div class="page-head">
+    <h1>My Orders</h1>
+    <span>{{ orders.length }} order{{ orders.length !== 1 ? 's' : '' }}</span>
+  </div>
+
+  <div ng-if="orders.length === 0" class="empty-orders">
+    <p>You haven't placed any orders yet.</p>
+    <a href="#!/products" class="btn-cont primary">Start Shopping</a>
+  </div>
+
+  <!-- <div class="order-card" ng-repeat="order in orders track by order.id"> -->
+  <div class="order-card" ng-repeat="order in orders track by order.id">
+    <!-- Header -->
+    <div class="order-header">
+      <div class="order-meta">
+        <span class="order-id">Order #{{ order.id }}</span>
+        <span class="order-date"
+          >{{ order.created_at | date:'d MMM yyyy · h:mm a' }}</span
+        >
+        <span class="status-pill" ng-class="order.status"
+          >{{ order.status | capitalize }}</span
+        >
+      </div>
+      <div class="order-total">
+        <span>Total</span>₹ {{ order.total_amount | number:0 }}
+      </div>
+    </div>
+
+    <!-- Items -->
+    <div class="items-list">
+      <div
+        class="order-item-row"
+        ng-repeat="item in order.order_items track by item.id"
+      >
+        <div class="item-left">
+          <div class="item-dot">P{{ item.catalog_product_id }}</div>
+          <div class="item-info">
+            <!-- {{item.name || "hello"}} -->
+            <div
+              class="iname"
+              ng-click="goToProduct(item.catalog_product_id)"
+              style="cursor: pointer"
+            >
+              {{item.product.name}}
+            </div>
+            <div class="imeta">Qty: {{ item.quantity }}</div>
+          </div>
+        </div>
+        <div class="item-price">₹ {{ item.price | number:0 }}</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <!-- Footer -->
+    <div class="order-footer">
+      <span class="footer-meta">
+        <!-- Address: available -->
+        <span class="footer-detail" ng-if="order.address">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          {{ order.address.line1 }}, {{ order.address.city }}
+        </span>
+
+        <!-- Address: deleted / unavailable -->
+        <span class="footer-detail deleted" ng-if="!order.address">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14H6L5 6" />
+            <path d="M10 11v6" />
+            <path d="M14 11v6" />
+            <path d="M9 6V4h6v2" />
+          </svg>
+          Address unavailable
+        </span>
+
+        <span class="footer-divider">·</span>
+
+        <!-- Phone: available -->
+        <span class="footer-detail" ng-if="order.phone_number">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.8a16 16 0 0 0 6.29 6.29l.94-.94a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+            />
+          </svg>
+          {{ order.phone_number.phone_number }}
+          <span
+            class="verified-dot"
+            ng-if="order.phone_number.verified"
+            title="Verified"
+          ></span>
+        </span>
+
+        <!-- Phone: deleted / unavailable -->
+        <span class="footer-detail deleted" ng-if="!order.phone_number">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14H6L5 6" />
+            <path d="M10 11v6" />
+            <path d="M14 11v6" />
+            <path d="M9 6V4h6v2" />
+          </svg>
+          Phone unavailable
+        </span>
+      </span>
+
+      <button class="view-btn" ng-click="viewOrder(order.id)">
+        View details
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

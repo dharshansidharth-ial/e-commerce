@@ -1,0 +1,194 @@
+<div class="admin-page" ng-controller="AdminController">
+  <div class="admin-hero">
+    <div>
+      <p class="page-header__eyebrow">Admin Dashboard</p>
+      <h1>Store Control Center</h1>
+      <p>Manage products, monitor every order, and remove unwanted reviews.</p>
+    </div>
+    <div class="admin-actions-top">
+      <button class="btn-create-category" ng-click="createCategoryOn = !createCategoryOn">
+        {{ createCategoryOn ? '✕ Cancel' : '+ Add Category' }}
+      </button>
+      <span class="admin-badge" ng-if="currentAdmin">{{ currentAdmin.email }}</span>
+    </div>
+  </div>
+
+  <div class="admin-alert error-message" ng-if="error">{{ error }}</div>
+  <div class="admin-alert success-message" ng-if="success">{{ success }}</div>
+  <div class="admin-loading" ng-if="loading">Loading admin data...</div>
+
+  <div class="admin-grid" ng-if="!loading">
+
+    <!-- Categories Section -->
+    <section class="admin-section admin-span-3">
+      <div class="admin-section-head">
+        <h2>Categories</h2>
+        <span>{{ categories.length }} total</span>
+      </div>
+
+      <!-- Create form — only shown when toggled -->
+      <form class="admin-form category-inline-form" ng-if="createCategoryOn" ng-submit="submitCategory()">
+        <input type="text" ng-model="categoryForm.name" placeholder="Category name" required />
+        <button type="submit" class="btn-primary">Create</button>
+      </form>
+
+      <div class="admin-table-list">
+        <div class="admin-card-row" ng-repeat="category in categories track by category.id">
+
+          <!-- View mode -->
+          <div ng-if="editingCategoryId !== category.id">
+            <h3>{{ category.name }}</h3>
+          </div>
+
+          <!-- Edit mode -->
+          <div ng-if="editingCategoryId === category.id" style="flex:1">
+            <input
+              type="text"
+              class="category-edit-input"
+              ng-model="categoryEditForm.name"
+              placeholder="Category name"
+              required
+            />
+          </div>
+
+          <div class="admin-card-actions">
+            <!-- View mode actions -->
+            <div ng-if="editingCategoryId !== category.id">
+              <!-- <button class="view-btn" ng-click="startEditCategory(category)">Edit</button> -->
+              <button class="danger-btn" ng-click="deleteCategory(category.id)">Delete</button>
+            </div>
+            <!-- Edit mode actions -->
+            <div ng-if="editingCategoryId === category.id">
+              <button class="view-btn" ng-click="saveCategory(category)">Save</button>
+              <button class="secondary-btn" ng-click="cancelEditCategory()">Cancel</button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="admin-card-row" ng-if="!categories.length">
+          <div>
+            <h3>No categories yet</h3>
+            <p>Click "+ Add Category" above to create one.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <section class="admin-section admin-span-3">
+      <div class="admin-section-head">
+        <h2>Products</h2>
+        <span>{{ products.length }} total</span>
+      </div>
+
+      <div class="admin-table-list">
+        <div class="admin-card-row" ng-repeat="product in products track by product.id">
+          <div>
+            <h3>{{ product.name }}</h3>
+            <p>{{ product.description }}</p>
+            <div class="admin-meta-row">
+              <span>Seller: {{ (product.seller && product.seller.email) || 'Platform' }}</span>
+              <span>Category: {{ product.category.name }}</span>
+              <span>Price: ₹{{ product.price }}</span>
+              <span>Stock: {{ product.stock }}</span>
+              <span>Status: {{ product.active ? 'Active' : 'Inactive' }}</span>
+            </div>
+          </div>
+          <div class="admin-card-actions">
+            <button class="view-btn" ng-click="startEditProduct(product)">Edit</button>
+            <button class="danger-btn" ng-click="deleteProduct(product.id)">Delete</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Orders -->
+    <section class="admin-section admin-span-3">
+      <div class="admin-section-head">
+        <h2>Orders</h2>
+        <span>{{ orders.length }} total</span>
+      </div>
+
+      <div class="admin-table-list">
+        <div class="admin-card-row" ng-repeat="order in orders track by order.id">
+          <div>
+            <h3>Order #{{ order.id }} by {{ order.user.email }}</h3>
+            <div class="admin-meta-row">
+              <span>Total: ₹{{ order.total_amount }}</span>
+              <span>Created: {{ order.created_at | date:'d MMM yyyy · h:mm a' }}</span>
+            </div>
+            <ul class="admin-item-list">
+              <li ng-repeat="item in order.order_items track by item.id">
+                {{ item.product.name }} x {{ item.quantity }}
+              </li>
+            </ul>
+          </div>
+          <div class="admin-order-actions">
+            <select ng-model="order.status" ng-options="status for status in orderStatuses"></select>
+            <button class="view-btn" ng-click="updateOrderStatus(order)">Update Status</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reviews -->
+    <section class="admin-section admin-span-3">
+      <div class="admin-section-head">
+        <h2>Reviews</h2>
+        <span>{{ reviews.length }} total</span>
+      </div>
+
+      <div class="admin-table-list">
+        <div class="admin-card-row" ng-repeat="review in reviews track by review.id">
+          <div>
+            <h3>{{ review.product.name }} · {{ review.user.email }}</h3>
+            <div class="admin-meta-row">
+              <span>Rating: {{ review.rating }}/5</span>
+              <span>{{ review.created_at | date:'d MMM yyyy · h:mm a' }}</span>
+            </div>
+            <p>{{ review.comment }}</p>
+          </div>
+          <div class="admin-card-actions">
+            <button class="danger-btn" ng-click="deleteReview(review.id)">Delete Review</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sellers -->
+    <section class="admin-section admin-span-3">
+      <div class="admin-section-head">
+        <h2>Sellers</h2>
+        <span>{{ sellers.length }} total</span>
+      </div>
+
+      <div class="admin-table-list">
+        <div class="admin-card-row" ng-repeat="seller in sellers track by seller.id">
+          <div>
+            <h3>{{ seller.email }}</h3>
+            <div class="admin-meta-row">
+              <span>Status: {{ seller.seller_status }}</span>
+              <span>Products: {{ seller.products_count }}</span>
+              <span>Revenue: ₹{{ seller.revenue | number:2 }}</span>
+              <span>Joined: {{ seller.created_at | date:'d MMM yyyy' }}</span>
+            </div>
+          </div>
+          <div class="admin-order-actions">
+            <select ng-model="seller.seller_status" ng-options="status for status in sellerStatuses"></select>
+            <button class="view-btn" ng-click="updateSellerStatus(seller)">Save</button>
+            <button class="btn-primary" ng-click="setSellerStatus(seller, 'approved')">Approve</button>
+            <button class="danger-btn" ng-click="setSellerStatus(seller, 'suspended')">Suspend</button>
+          </div>
+        </div>
+        <div class="admin-card-row" ng-if="!sellers.length">
+          <div>
+            <h3>No sellers yet</h3>
+            <p>Seller accounts will appear here after they register.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
