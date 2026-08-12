@@ -3,8 +3,8 @@ module Catalog
     after_update :remove_from_carts, if: -> { saved_change_to_active? && !active }
 
     belongs_to :sub_category,
-               foreign_key: :catalog_category_id,
-               class_name: "Catalog::Category"
+               foreign_key: :catalog_sub_categories_id,
+               class_name: "Catalog::SubCategory"
 
     belongs_to :seller,
                class_name: "User",

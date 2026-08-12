@@ -11,12 +11,14 @@
 <body ng-controller="ProductsController">
 <div class="products-page">
 
-  <!-- PAGE HEADER -->
-  <header class="page-header">
-    <p class="page-header__eyebrow">Curated Collection</p>
-    <h1 class="page-header__title">Our <em>Products</em></h1>
-    <div class="page-header__rule"></div>
-  </header>
+  <!-- EMPTY STATE -->
+  <div class="empty-products" ng-if="!loading && !error && products.length === 0">
+    <img
+      class="empty-products__image"
+      src="assets/images/no_product.png"
+      alt="No products found" />
+    <p class="empty-products__line">Our shelves are empty right now — but the good stuff is on its way!</p>
+  </div>
 
   <!-- PRODUCT GRID -->
   <div class="products-container" ng-cloak >

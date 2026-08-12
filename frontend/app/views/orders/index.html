@@ -1,14 +1,22 @@
-<div ng-controller="OrderController" class="orders-wrapper">
+<div ng-controller="OrderController" class="orders-wrapper" ng-class="{'orders-wrapper--empty': orders.length === 0}">
   <!-- <h1>{{orders}}</h1> -->
 
-  <div class="page-head">
+  <div class="page-head" ng-if="orders.length > 0">
     <h1>My Orders</h1>
     <span>{{ orders.length }} order{{ orders.length !== 1 ? 's' : '' }}</span>
   </div>
 
   <div ng-if="orders.length === 0" class="empty-orders">
-    <p>You haven't placed any orders yet.</p>
-    <a href="#!/products" class="btn-cont primary">Start Shopping</a>
+    <img
+      class="empty-orders__image"
+      src="assets/images/no_orders.webp"
+      alt="No orders yet" />
+    <h2 class="empty-orders__heading">No orders yet</h2>
+    <p class="empty-orders__line">Looks like you haven’t placed an order yet. Start shopping and your orders will appear here.</p>
+    <a href="#!/products" class="empty-orders__cta">
+      Browse Products
+      <span class="empty-orders__arrow" aria-hidden="true">&rarr;</span>
+    </a>
   </div>
 
   <!-- <div class="order-card" ng-repeat="order in orders track by order.id"> -->

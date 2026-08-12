@@ -8,12 +8,12 @@ module Api
         def index
           @products = ::Catalog::Product
             .where(active: true)
-            .includes(:seller, :category)
+            .includes(:seller, :sub_category)
 
           render json: @products.as_json(
             include: {
               seller: { only: [:id, :email] },
-              category: { only: [:id, :name] }
+              sub_category: { only: [:id, :name] }
             }
           )
         end
@@ -22,7 +22,7 @@ module Api
           render json: @product.as_json(
             include: {
               seller: { only: [:id, :email] },
-              category: { only: [:id, :name] }
+              sub_category: { only: [:id, :name] }
             }
           )
         end

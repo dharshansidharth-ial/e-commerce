@@ -22,33 +22,115 @@
 
     <div class="navbar" ng-controller="NavbarController">
       <div class="nav-left">
-        <div class="menu-container">
-          <button
-            class="menu-toggle"
-            ng-if="loggedIn"
-            ng-click="toggleMenu($event)"
-          >
-            <span class="ham-line"></span>
-            <span class="ham-line"></span>
-            <span class="ham-line"></span>
-          </button>
+        <a href="#!/products" class="brand">
+          <img
+            src="/assets/images/logo.jpeg"
+            alt="RediffMart"
+            class="brand-logo"
+          />
+        </a>
 
-          <div class="dropdown-menu" ng-show="menuOpen && loggedIn">
-            <a href="#!/products" ng-click="closeMenu()">Products</a>
-            <a href="#!/cart" ng-if="isCustomer()" ng-click="closeMenu()">Cart</a>
-            <a href="#!/profile" ng-if="isCustomer()" ng-click="closeMenu()">Profile</a>
-            <a href="#!/orders" ng-if="isCustomer()" ng-click="closeMenu()">Orders</a>
-            <a href="#!/admin" ng-if="isAdmin()" ng-click="closeMenu()">Admin</a>
-            <a href="#!/seller" ng-if="isSeller()" ng-click="closeMenu()">Seller</a>
-          </div>
-        </div>
-
-        <a href="#!/products" class="brand">RediffMart</a>
+        <ul class="nav-links" ng-if="loggedIn">
+          <li>
+            <a href="#!/products" ng-class="{ active: isActive('/products') }">Products</a>
+          </li>
+          <li ng-if="isCustomer()">
+            <a href="#!/orders" ng-class="{ active: isActive('/orders') }">Orders</a>
+          </li>
+          <li ng-if="isAdmin()">
+            <a href="#!/admin" ng-class="{ active: isActive('/admin') }">Admin</a>
+          </li>
+          <li ng-if="isSeller()">
+            <a href="#!/seller" ng-class="{ active: isActive('/seller') }">Seller</a>
+          </li>
+        </ul>
       </div>
 
       <div class="nav-right">
-        <span ng-if="loggedIn" class="logout-wrapper">
-          <a title="Logout" href="" ng-click="logout()" class="logout-btn">
+        <div class="nav-search" ng-if="loggedIn">
+          <svg
+            class="search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="7"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search products..."
+          />
+        </div>
+
+        <span ng-if="loggedIn" class="nav-icons">
+          <div class="profile-container" ng-if="isCustomer()">
+            <button
+              class="icon-btn"
+              ng-class="{ active: profileMenuOpen }"
+              ng-click="toggleProfileMenu($event)"
+              title="Profile"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </button>
+
+            <div class="dropdown-menu profile-dropdown" ng-show="profileMenuOpen">
+              <div class="profile-info">
+                <div class="profile-avatar">{{ currentUser.email.charAt(0).toUpperCase() }}</div>
+                <div class="profile-text">
+                  <p class="profile-email" title="{{ currentUser.email }}">{{ currentUser.email }}</p>
+                  <span class="profile-role">{{ currentUser.role }}</span>
+                </div>
+              </div>
+              <button class="dropdown-logout-btn" ng-click="logout()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Logout
+              </button>
+            </div>
+          </div>
+
+          <a
+            ng-if="isCustomer()"
+            href="javascript:void(0)"
+            class="icon-btn"
+            title="Favourites"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"></path>
+            </svg>
+          </a>
+
+          <a
+            ng-if="isCustomer()"
+            href="#!/cart"
+            class="icon-btn"
+            title="Cart"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+          </a>
+
+          <a
+            ng-if="!isCustomer()"
+            title="Logout"
+            href=""
+            ng-click="logout()"
+            class="icon-btn logout-btn"
+          >
             <img
               src="/assets/images/logout.png"
               alt="Logout"

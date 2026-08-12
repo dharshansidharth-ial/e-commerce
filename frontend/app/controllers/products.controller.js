@@ -3,6 +3,7 @@ app.controller(
   function ($scope, ProductService, CartService, AuthService, $location) {
     $scope.products = [];
     $scope.error = null;
+    $scope.loading = true;
     $scope.isCustomer = AuthService.isCustomer();
 
     const token = AuthService.getToken();
@@ -18,6 +19,9 @@ app.controller(
       })
       .catch(function (error) {
         $scope.error = error.data?.error || "Failed to load products";
+      })
+      .finally(function () {
+        $scope.loading = false;
       });
 
     // Add to cart
