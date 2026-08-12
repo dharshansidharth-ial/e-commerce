@@ -2,7 +2,7 @@ module Catalog
   class Product < ApplicationRecord
     after_update :remove_from_carts, if: -> { saved_change_to_active? && !active }
 
-    belongs_to :category,
+    belongs_to :sub_category,
                foreign_key: :catalog_category_id,
                class_name: "Catalog::Category"
 

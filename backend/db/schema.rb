@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_25_090000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_12_052648) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -33,17 +33,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_25_090000) do
 
   create_table "catalog_products", force: :cascade do |t|
     t.boolean "active"
-    t.bigint "catalog_category_id", null: false
+    t.bigint "catalog_sub_categories_id", null: false
     t.datetime "created_at", null: false
     t.text "description"
-    t.string "image_url"
+    t.string "image_url", default: "assets/images/no_image.png"
     t.string "name"
     t.decimal "price"
     t.bigint "seller_id"
     t.integer "stock"
     t.datetime "updated_at", null: false
-    t.index ["catalog_category_id"], name: "index_catalog_products_on_catalog_category_id"
+    t.index ["catalog_sub_categories_id"], name: "index_catalog_products_on_catalog_sub_categories_id"
     t.index ["seller_id"], name: "index_catalog_products_on_seller_id"
+  end
+
+  create_table "catalog_sub_categories", force: :cascade do |t|
+    t.bigint "catalog_categories_id", null: false
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+    t.index ["catalog_categories_id"], name: "index_catalog_sub_categories_on_catalog_categories_id"
   end
 
   create_table "checkout_order_items", force: :cascade do |t|
@@ -144,9 +152,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_25_090000) do
   end
 
   add_foreign_key "addresses", "users"
-  add_foreign_key "catalog_products", "catalog_categories"
-  add_foreign_key "catalog_products", "catalog_categories"
+  add_foreign_key "catalog_products", "catalog_sub_categories", column: "catalog_sub_categories_id"
   add_foreign_key "catalog_products", "users", column: "seller_id"
+  add_foreign_key "catalog_sub_categories", "catalog_categories", column: "catalog_categories_id"
   add_foreign_key "checkout_order_items", "catalog_products"
   add_foreign_key "checkout_order_items", "catalog_products"
   add_foreign_key "checkout_order_items", "checkout_orders"
