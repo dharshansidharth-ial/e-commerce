@@ -2,7 +2,9 @@ class Api::V1::Seller::DashboardController < Api::V1::BaseController
   before_action :authenticate_seller!
 
   def show
-    products = current_user.products_for_sale.includes(:reviews, :category).order(created_at: :desc)
+    products = current_user.products_for_sale
+      .includes(:reviews, sub_category: :catalog_category)
+      .order(created_at: :desc)
     reviews = Feedback::Review
       .joins(:product)
       .where(catalog_products: { seller_id: current_user.id })
@@ -27,10 +29,15 @@ class Api::V1::Seller::DashboardController < Api::V1::BaseController
         {
           id: product.id,
           name: product.name,
+          description: product.description,
           price: product.price,
           stock: product.stock,
           active: product.active,
-          category: product.category&.as_json(only: [:id, :name]),
+          image_url: product.image_url,
+          sub_category: product.sub_category&.as_json(
+            only: [:id, :name],
+            include: { catalog_category: { only: [:id, :name] } }
+          ),
           revenue: product.revenue.to_f,
           reviews_count: product.reviews.size,
         }

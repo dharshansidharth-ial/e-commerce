@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_12_052648) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_13_070000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -27,6 +27,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_12_052648) do
 
   create_table "catalog_categories", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "image_url", default: "assets/images/categories/default.svg"
     t.string "name"
     t.datetime "updated_at", null: false
   end
@@ -36,6 +37,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_12_052648) do
     t.bigint "catalog_sub_categories_id", null: false
     t.datetime "created_at", null: false
     t.text "description"
+    t.float "discount"
     t.string "image_url", default: "assets/images/no_image.png"
     t.string "name"
     t.decimal "price"

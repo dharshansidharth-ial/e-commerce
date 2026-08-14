@@ -29,6 +29,7 @@
       <!-- Create form — only shown when toggled -->
       <form class="admin-form category-inline-form" ng-if="createCategoryOn" ng-submit="submitCategory()">
         <input type="text" ng-model="categoryForm.name" placeholder="Category name" required />
+        <input type="text" ng-model="categoryForm.image_url" placeholder="Image URL (optional)" />
         <button type="submit" class="btn-primary">Create</button>
       </form>
 

@@ -81,6 +81,9 @@ app.controller(
       AdminService.createCategory($scope.categoryForm)
       .then((res) => {
         alert("Created category!")
+        $scope.categoryForm = {};
+        $scope.createCategoryOn = false;
+        loadDashboard();
       })
       .catch((err) => {
         console.error(err)

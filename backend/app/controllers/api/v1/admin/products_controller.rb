@@ -3,10 +3,10 @@ class Api::V1::Admin::ProductsController < Api::V1::BaseController
   before_action :set_product, only: [:show, :update, :destroy]
 
   def index
-    products = Catalog::Product.includes(:category, :seller).order(created_at: :desc)
+    products = Catalog::Product.includes(:sub_category, :seller).order(created_at: :desc)
     render json: products.as_json(
       include: {
-        category: { only: [:id, :name] },
+        sub_category: { only: [:id, :name] },
         seller: { only: [:id, :email, :seller_status] }
       }
     )

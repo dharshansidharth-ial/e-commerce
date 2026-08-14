@@ -3,7 +3,9 @@ class Api::V1::Seller::ProductsController < Api::V1::BaseController
   before_action :set_product, only: [:show, :update, :destroy]
 
   def index
-    products = current_user.products_for_sale.includes(:category, :reviews).order(created_at: :desc)
+    products = current_user.products_for_sale
+      .includes(sub_category: :catalog_category, reviews: :user)
+      .order(created_at: :desc)
     render json: products.map { |product| serialize_product(product) }
   end
 
@@ -46,13 +48,16 @@ class Api::V1::Seller::ProductsController < Api::V1::BaseController
   end
 
   def product_params
-    params.require(:product).permit(:name, :description, :price, :stock, :active, :catalog_category_id, :image_url)
+    params.require(:product).permit(:name, :description, :price, :stock, :active, :catalog_sub_categories_id, :image_url)
   end
 
   def serialize_product(product)
     product.as_json(
       include: {
-        category: { only: [:id, :name] },
+        sub_category: {
+          only: [:id, :name],
+          include: { catalog_category: { only: [:id, :name] } }
+        },
         reviews: {
           include: {
             user: { only: [:id, :email] }

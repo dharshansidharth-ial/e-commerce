@@ -2,6 +2,10 @@ var app = angular.module("app", ["ngRoute"]);
 
 app.config(function ($routeProvider, $httpProvider) {
   $routeProvider
+    .when("/home", {
+      templateUrl: "app/views/home/index.html",
+      controller: "HomeController",
+    })
     .when("/login", {
       templateUrl: "app/views/auth/login.html",
       controller: "AuthController",

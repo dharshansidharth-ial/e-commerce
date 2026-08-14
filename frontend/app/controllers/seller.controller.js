@@ -7,6 +7,7 @@ app.controller(
     $scope.products = [];
     $scope.reviews = [];
     $scope.categories = [];
+    $scope.subCategoryOptions = [];
     $scope.error = null;
     $scope.success = null;
     $scope.loading = false;
@@ -68,6 +69,12 @@ app.controller(
 
     $scope.startEditProduct = function (product) {
       $scope.formMode = 'edit';
+      var subCategory = product.sub_category || {};
+      var categoryId = subCategory.catalog_category ? subCategory.catalog_category.id : null;
+      var category = ($scope.categories || []).find(function (c) {
+        return c.id === categoryId;
+      });
+
       $scope.productForm = {
         id: product.id,
         name: product.name,
@@ -75,10 +82,22 @@ app.controller(
         price: Number(product.price || 0),
         stock: Number(product.stock || 0),
         active: !!product.active,
-        catalog_category_id: product.catalog_category_id || product.category?.id,
+        catalog_category_id: categoryId,
+        catalog_sub_categories_id: subCategory.id || product.catalog_sub_categories_id,
         image_url: product.image_url || '',
       };
+      $scope.subCategoryOptions = category ? category.sub_categories : [];
       setMessage(null, null);
+    };
+
+    $scope.onCategoryChange = function () {
+      $scope.productForm.catalog_sub_categories_id = null;
+
+      var category = ($scope.categories || []).find(function (c) {
+        return c.id === $scope.productForm.catalog_category_id;
+      });
+
+      $scope.subCategoryOptions = category ? category.sub_categories : [];
     };
 
     $scope.resetProductForm = function () {
@@ -87,6 +106,7 @@ app.controller(
         active: true,
         stock: 0,
       };
+      $scope.subCategoryOptions = [];
     };
 
     $scope.submitProduct = function () {

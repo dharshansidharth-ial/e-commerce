@@ -29,10 +29,17 @@
         <input type="number" ng-model="productForm.stock" placeholder="Stock" min="0" required />
         <input type="text" ng-model="productForm.image_url" placeholder="Image URL" />
 
-        <select ng-model="productForm.catalog_category_id" required>
+        <select ng-model="productForm.catalog_category_id" ng-change="onCategoryChange()" required>
           <option value="">Select category</option>
           <option ng-repeat="category in categories" ng-value="category.id">
             {{ category.name }}
+          </option>
+        </select>
+
+        <select ng-model="productForm.catalog_sub_categories_id" ng-disabled="!productForm.catalog_category_id" required>
+          <option value="">Select sub-category</option>
+          <option ng-repeat="subCategory in subCategoryOptions" ng-value="subCategory.id">
+            {{ subCategory.name }}
           </option>
         </select>
 
@@ -87,7 +94,8 @@
             <h3>{{ product.name }}</h3>
             <p>{{ product.description }}</p>
             <div class="admin-meta-row">
-              <span>Category: {{ product.category.name }}</span>
+              <span>Category: {{ product.sub_category.catalog_category.name }}</span>
+              <span>Sub-category: {{ product.sub_category.name }}</span>
               <span>Price: ₹{{ product.price }}</span>
               <span>Stock: {{ product.stock }}</span>
               <span>Revenue: ₹{{ product.revenue | number:2 }}</span>

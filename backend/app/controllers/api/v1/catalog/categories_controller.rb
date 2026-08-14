@@ -5,8 +5,8 @@ module Api
         before_action :set_category, only: [:show, :update, :destroy]
 
         def index
-          @categories = ::Catalog::Category.all
-          render json: @categories
+          @categories = ::Catalog::Category.includes(:sub_categories)
+          render json: @categories.as_json(include: { sub_categories: { only: [:id, :name] } })
         end
 
         def show
@@ -56,7 +56,7 @@ module Api
         end
 
         def category_params
-          params.require(:category).permit(:name, :description)
+          params.require(:category).permit(:name, :description, :image_url)
         end
       end
     end

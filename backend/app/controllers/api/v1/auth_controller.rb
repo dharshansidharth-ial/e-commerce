@@ -15,7 +15,7 @@ class Api::V1::AuthController < Api::V1::BaseController
         end
       end
 
-      token = JsonWebToken.encode(user_id: @user.id)
+      token = JsonWebToken.encode(user_id: @user.id)  
 
       render json: {
         login: 'success',

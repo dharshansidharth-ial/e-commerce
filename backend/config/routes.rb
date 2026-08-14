@@ -46,9 +46,11 @@ Rails.application.routes.draw do
       end
 
       namespace :catalog do
-        resources :products
+        # resources :products
         resources :categories do
-          resources :products, only: [:index]
+          resources :sub_categories do
+            resources :products, only: [:index, :show]
+          end
         end
       end
 

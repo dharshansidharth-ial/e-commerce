@@ -31,7 +31,7 @@ app.factory('AuthService', function ($http) {
 
     if (role === 'admin') return '/admin';
     if (role === 'seller') return '/seller';
-    return '/products';
+    return '/home';
   }
 
   function readLoginRoute() {

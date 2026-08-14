@@ -22,7 +22,7 @@
 
     <div class="navbar" ng-controller="NavbarController">
       <div class="nav-left">
-        <a href="#!/products" class="brand">
+        <a href="#!/home" class="brand">
           <img
             src="/assets/images/logo.jpeg"
             alt="RediffMart"
@@ -31,6 +31,9 @@
         </a>
 
         <ul class="nav-links" ng-if="loggedIn">
+          <li>
+            <a href="#!/home" ng-class="{ active: isActive('/home') }">Home</a>
+          </li>
           <li>
             <a href="#!/products" ng-class="{ active: isActive('/products') }">Products</a>
           </li>
@@ -154,6 +157,7 @@
 
     <script src="app/app.js"></script>
     <script src="app/services/auth.service.js"></script>
+    <script src="app/services/category.service.js"></script>
     <script src="app/services/product.service.js"></script>
     <script src="app/services/cart.service.js"></script>
     <script src="app/services/order.service.js"></script>
@@ -164,6 +168,7 @@
     <script src="app/services/seller.service.js"></script>
 
     <script src="app/controllers/auth.controller.js"></script>
+    <script src="app/controllers/home.controller.js"></script>
     <script src="app/controllers/navbar.controller.js"></script>
     <script src="app/controllers/user.controller.js"></script>
     <script src="app/controllers/products.controller.js"></script>

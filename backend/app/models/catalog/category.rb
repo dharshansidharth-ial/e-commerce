@@ -6,7 +6,7 @@ module Catalog
     #          dependent: :destroy
 
     has_many :sub_categories,
-              foreign_key: :catalog_category_id,
+              foreign_key: :catalog_categories_id,
               class_name: "Catalog::SubCategory"
   end
 end

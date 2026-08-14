@@ -8,6 +8,19 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+# ── CATEGORIES ───────────────────────────────────────────────
+category_image_urls = {
+  "Electronics" => "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Man_with_smartphone_and_laptop_%28Unsplash%29.jpg/960px-Man_with_smartphone_and_laptop_%28Unsplash%29.jpg",
+  "Fashion" => "https://upload.wikimedia.org/wikipedia/commons/a/a6/EFTA00001678_-_Wooden_clothing_rack_with_clothes_on_hangers_folded_shirts_on_shelves_and_various_shoes_neatly_arranged_at_the_bottom.jpg",
+  "Groceries" => "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Basket_of_Vegetables_%28Unsplash%29.jpg/960px-Basket_of_Vegetables_%28Unsplash%29.jpg",
+  "Bakery" => "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Bread_Basket_%28Unsplash%29.jpg/960px-Bread_Basket_%28Unsplash%29.jpg",
+}
+
+category_image_urls.each do |category_name, image_url|
+  category = Catalog::Category.find_or_create_by!(name: category_name)
+  category.update!(image_url: image_url) if category.image_url.blank?
+end
+
 # ── SUB-CATEGORIES ──────────────────────────────────────────
 sub_category_names = {
   "Electronics" => ["Mobiles", "Laptops"],

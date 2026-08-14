@@ -1,0 +1,29 @@
+<div class="home-page" ng-cloak>
+
+  <div class="page-header">
+    <p class="page-header__eyebrow">RediffMart</p>
+    <h1 class="page-header__title">Shop by <em>Category</em></h1>
+    <div class="page-header__rule"></div>
+  </div>
+
+  <div class="empty-categories" ng-if="!loading && !error && categories.length === 0">
+    <p class="empty-categories__line">No categories are available right now — check back soon!</p>
+  </div>
+
+  <p class="home-error" ng-if="error">{{ error }}</p>
+
+  <div class="categories-container">
+    <div
+      ng-repeat="category in categories track by category.id"
+      class="category-card"
+      ng-click="viewCategory(category)">
+      <div class="category-image">
+        <img
+          ng-src="{{ category.image_url || 'assets/images/categories/default.svg' }}"
+          alt="{{ category.name }}"/>
+      </div>
+      <h3 class="category-name">{{ category.name }}</h3>
+    </div>
+  </div>
+
+</div>
