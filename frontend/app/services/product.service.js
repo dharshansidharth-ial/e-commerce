@@ -9,8 +9,8 @@ app.factory('ProductService', function($http, AuthService) {
   }
 
   return {
-    getAll: function() {
-      return $http.get(API_URL + '/catalog/products', getAuthConfig());
+    getAll: function(category_id) {
+      return $http.get(API_URL + `/catalog/categories/${category_id}/products`, getAuthConfig());
     },
     get: function(id) {
       return $http.get(API_URL + '/catalog/products/' + id, getAuthConfig());

@@ -1,7 +1,7 @@
 app.controller(
-  'HomeController',
-  function ($scope, CategoryService, AuthService, $location) {
-    $scope.categories = [];
+  'SubCategoriesController',
+  function ($scope, SubCategoriesService, AuthService, $location) {
+    $scope.sub_categories = [];
     $scope.error = null;
     $scope.loading = true;
     // $scope.cid = true;
@@ -13,7 +13,7 @@ app.controller(
       return;
     }
 
-    CategoryService.getAll()
+    SubCategoriesService.getAll()
       .then(function (response) {
         $scope.categories = response.data;
       })
@@ -26,7 +26,7 @@ app.controller(
 
     $scope.viewCategory = function (category) {
       // console.log(category)
-      $location.path(`/category/${category.id}/products`);
+      $location.path(`/category/${category.id}/sub_categories`);
     };
   },
 );

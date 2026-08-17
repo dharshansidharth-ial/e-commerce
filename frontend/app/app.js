@@ -42,7 +42,7 @@ app.config(function ($routeProvider, $httpProvider) {
       templateUrl: "app/views/orders/show.html",
       controller: "OrderController",
     })
-    .when("/products", {
+    .when("/category/:category_id/products", {
       templateUrl: "app/views/products/index.html",
       controller: "ProductsController",
     })

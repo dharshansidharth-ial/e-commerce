@@ -10,6 +10,15 @@ module Api
             .where(active: true)
             .includes(:seller, :sub_category)
 
+          if params[:category_id]
+            sub_category_ids = ::Catalog::SubCategory
+              .where(catalog_categories_id: params[:category_id])
+              .select(:id)
+            @products = @products.where(catalog_sub_categories_id: sub_category_ids)
+          elsif params[:sub_category_id]
+            @products = @products.where(catalog_sub_categories_id: params[:sub_category_id])
+          end
+
           render json: @products.as_json(
             include: {
               seller: { only: [:id, :email] },

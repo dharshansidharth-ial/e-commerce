@@ -1,10 +1,12 @@
 app.controller(
   "ProductsController",
-  function ($scope, ProductService, CartService, AuthService, $location) {
+  function ($scope, ProductService, CartService, AuthService, $location, $routeParams) {
     $scope.products = [];
     $scope.error = null;
     $scope.loading = true;
     $scope.isCustomer = AuthService.isCustomer();
+
+    const category_id = $routeParams.category_id;
 
     const token = AuthService.getToken();
     if (!token) {
@@ -12,8 +14,8 @@ app.controller(
       return;
     }
 
-    // Load all products
-    ProductService.getAll()
+    // Load all products for this category
+    ProductService.getAll(category_id)
       .then(function (response) {
         $scope.products = response.data;
       })
