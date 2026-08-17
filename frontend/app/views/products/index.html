@@ -20,54 +20,104 @@
     <p class="empty-products__line">Our shelves are empty right now — but the good stuff is on its way!</p>
   </div>
 
-  <!-- PRODUCT GRID -->
-  <div class="products-container" ng-cloak >
+  <!-- LAYOUT: SIDEBAR + PRODUCT GRID -->
+  <div class="products-layout" ng-cloak>
 
-    <div ng-repeat="product in products track by product.id" class="product-card">
+    <!-- FILTERS SIDEBAR -->
+    <aside class="products-sidebar" ng-if="subCategories.length">
+      <h3 class="sidebar-title">Filters</h3>
 
-      <!-- IMAGE -->
-      <div class="product-image">
-        <img
-          ng-src="{{product.image_url || 'assets/images/no_image.png'}}"
-          alt="{{product.name}}"/>
+      <div class="filter-section">
+        <h4 class="filter-heading">Explore More</h4>
 
-        <!-- Out-of-stock overlay -->
-        <div class="oos-overlay" ng-if="product.stock == 0">
-          <span class="oos-badge">Out of Stock</span>
-        </div>
+        <label
+          class="filter-option"
+          ng-repeat="subCategory in subCategories track by subCategory.id">
+          <input
+            type="checkbox"
+            ng-model="selectedSubCategoryIds[subCategory.id]"
+            ng-change="onFilterChange()"/>
+          <span class="filter-option__label">{{ subCategory.name }}</span>
+          <span class="filter-option__count">({{ subCategoryCounts[subCategory.id] || 0 }})</span>
+        </label>
       </div>
+    </aside>
 
-      <!-- INFO -->
-      <div class="product-info">
-        <h3 class="product-name">{{ product.name }}</h3>
-        <p class="product-description">{{ product.description }}</p>
+    <!-- PRODUCT GRID -->
+    <div class="products-container">
 
-        <div class="product-bottom">
-          <p class="product-price">
-            <span class="currency">₹</span>{{ product.price | number:0 }}
-          </p>
+      <div ng-repeat="product in products track by product.id" class="product-card">
+
+        <!-- IMAGE -->
+        <div class="product-image">
+          <img
+            ng-src="{{product.image_url || 'assets/images/no_image.png'}}"
+            alt="{{product.name}}"/>
+
+          <!-- Out-of-stock overlay -->
+          <div class="oos-overlay" ng-if="product.stock == 0">
+            <span class="oos-badge">Out of Stock</span>
+          </div>
         </div>
-      </div>
 
-      <div class="card-divider"></div>
+        <!-- INFO -->
+        <div class="product-info">
+          <h3 class="product-name">{{ product.name }}</h3>
+          <p class="product-description">{{ product.description }}</p>
 
-      <!-- ACTIONS -->
-      <div class="product-actions">
-        <button class="btn view-btn" ng-click="productView(product)">
-          View
-        </button>
-        <button
-          ng-if="isCustomer"
-          class="btn cart-btn"
-          ng-click="addToCart(product)"
-          ng-disabled="product.stock == 0">
-          <span>Add to Cart</span>
-        </button>
+          <div class="product-bottom">
+            <p class="product-price">
+              <span class="currency">₹</span>{{ product.price | number:0 }}
+            </p>
+          </div>
+        </div>
+
+        <div class="card-divider"></div>
+
+        <!-- ACTIONS -->
+        <div class="product-actions">
+          <button class="btn view-btn" ng-click="productView(product)">
+            View
+          </button>
+          <button
+            ng-if="isCustomer"
+            class="btn cart-btn"
+            ng-click="addToCart(product)"
+            ng-disabled="product.stock == 0">
+            <span>Add to Cart</span>
+          </button>
+        </div>
+
       </div>
 
     </div>
 
   </div>
+
+  <!-- PAGINATION -->
+  <nav class="pagination" ng-if="!loading && !error && products.length" aria-label="Product pages">
+    <button
+      class="pagination-arrow"
+      ng-click="goToPage(currentPage - 1)"
+      ng-disabled="currentPage === 1">
+      &lsaquo;
+    </button>
+
+    <button
+      class="pagination-page"
+      ng-repeat="page in pageNumbers track by page"
+      ng-class="{ active: page === currentPage }"
+      ng-click="goToPage(page)">
+      {{ page }}
+    </button>
+
+    <button
+      class="pagination-arrow"
+      ng-click="goToPage(currentPage + 1)"
+      ng-disabled="currentPage === totalPages">
+      &rsaquo;
+    </button>
+  </nav>
 
 </div>
 </body>

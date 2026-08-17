@@ -8,7 +8,7 @@ module Api
         def index
           @products = ::Catalog::Product
             .where(active: true)
-            .includes(:seller, :sub_category)
+            .includes(:seller, :sub_category).offset()
 
           if params[:category_id]
             sub_category_ids = ::Catalog::SubCategory
