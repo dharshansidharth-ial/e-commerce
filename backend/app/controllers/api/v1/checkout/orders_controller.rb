@@ -4,15 +4,34 @@ class Api::V1::Checkout::OrdersController < Api::V1::BaseController
   before_action :set_order , only: [:show , :cancel]
 
   def index
-    render json: @orders, include: {
-             order_items: {
-               include: {
-                 product: {
-                   only: [:name],
-                 },
-               },
-             },
-           }
+    total_count = @orders.count
+
+    page = [params[:page].to_i, 1].max
+    per_page = params[:per_page].to_i
+    per_page = 10 if per_page < 1
+
+    total_pages = [(total_count.to_f / per_page).ceil, 1].max
+
+    @orders = @orders.order(created_at: :desc).limit(per_page).offset((page - 1) * per_page)
+
+    render json: {
+      orders: @orders.as_json(
+        include: {
+          order_items: {
+            include: {
+              product: {
+                only: [:name],
+              },
+            },
+          },
+        },
+      ),
+      meta: {
+        total_count: total_count,
+        total_pages: total_pages,
+        current_page: page,
+      },
+    }
   end
 
   def show
