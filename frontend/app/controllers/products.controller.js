@@ -11,7 +11,7 @@ app.controller(
 
     // Pagination is UI-only for now: it just tracks/highlights the
     // current page, it doesn't slice which products are rendered.
-    var PAGE_SIZE = 8;
+    var PAGE_SIZE = 10;
     $scope.currentPage = 1;
     $scope.totalPages = 1;
     $scope.pageNumbers = [1];
