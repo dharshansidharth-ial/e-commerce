@@ -3,6 +3,7 @@ class Api::V1::AuthController < Api::V1::BaseController
 
   def login
     @user = User.find_by(email: params[:email])
+    puts "user : #{@user.email} , #{@user.password}"
 
     if @user&.authenticate(params[:password]) && @user.deleted_at.nil?
       if @user.seller?

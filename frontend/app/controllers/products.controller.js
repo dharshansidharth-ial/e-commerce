@@ -1,7 +1,6 @@
 app.controller(
   "ProductsController",
   function ($scope, ProductService, SubCategoryService, CartService, AuthService, $location, $routeParams) {
-    $scope.allProducts = [];
     $scope.products = [];
     $scope.subCategories = [];
     $scope.subCategoryCounts = {};
