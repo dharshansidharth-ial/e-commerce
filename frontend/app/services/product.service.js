@@ -1,16 +1,20 @@
 app.factory('ProductService', function($http, AuthService) {
   const API_URL = "http://localhost:3000/api/v1";
 
-  function getAuthConfig() {
+  function getAuthConfig(params) {
     const token = AuthService.getToken();
     return {
-      headers: { Authorization: "Bearer " + token }
+      headers: { Authorization: "Bearer " + token },
+      params: params || {}
     };
   }
 
   return {
-    getAll: function(category_id) {
-      return $http.get(API_URL + `/catalog/categories/${category_id}/products`, getAuthConfig());
+    getAll: function(category_id, params) {
+      return $http.get(API_URL + `/catalog/categories/${category_id}/products`, getAuthConfig(params));
+    },
+    getMetadata: function(category_id, params) {
+      return $http.get(API_URL + `/catalog/categories/${category_id}/metadata`, getAuthConfig(params));
     },
     get: function(id) {
       return $http.get(API_URL + '/catalog/products/' + id, getAuthConfig());

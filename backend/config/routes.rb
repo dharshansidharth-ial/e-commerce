@@ -49,6 +49,9 @@ Rails.application.routes.draw do
         # resources :products
         resources :categories do
           resources :products
+
+          get "/metadata" , to: "products#metadata" 
+
           resources :sub_categories do
             resources :products, only: [:index, :show]
           end

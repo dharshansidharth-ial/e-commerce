@@ -9,8 +9,6 @@ app.controller(
     $scope.loading = true;
     $scope.isCustomer = AuthService.isCustomer();
 
-    // Pagination is UI-only for now: it just tracks/highlights the
-    // current page, it doesn't slice which products are rendered.
     var PAGE_SIZE = 10;
     $scope.currentPage = 1;
     $scope.totalPages = 1;
@@ -24,40 +22,54 @@ app.controller(
       return;
     }
 
-    function computeSubCategoryCounts() {
-      var counts = {};
+    function buildParams(page) {
+      var params = { page: page, per_page: PAGE_SIZE };
 
-      $scope.allProducts.forEach(function (product) {
-        if (!product.sub_category) return;
-        var id = product.sub_category.id;
-        counts[id] = (counts[id] || 0) + 1;
+      var activeIds = Object.keys($scope.selectedSubCategoryIds).filter(function (id) {
+        return $scope.selectedSubCategoryIds[id];
       });
+      if (activeIds.length) {
+        params.sub_category_ids = activeIds.join(",");
+      }
 
-      $scope.subCategoryCounts = counts;
+      return params;
     }
 
-    function updatePagination() {
-      $scope.totalPages = Math.max(1, Math.ceil($scope.products.length / PAGE_SIZE));
-      $scope.pageNumbers = Array.from({ length: $scope.totalPages }, function (_, i) {
-        return i + 1;
-      });
-      $scope.currentPage = 1;
+    // Products and their metadata (pagination + per-subcategory counts) come
+    // from two separate endpoints, so they're fetched independently instead
+    // of being merged into a single $scope.products array.
+    function loadProducts(page) {
+      $scope.loading = true;
+      var params = buildParams(page);
+
+      ProductService.getAll(category_id, params)
+        .then(function (response) {
+          $scope.products = response.data.products;
+        })
+        .catch(function (error) {
+          $scope.error = error.data?.error || "Failed to load products";
+        })
+        .finally(function () {
+          $scope.loading = false;
+        });
+
+      ProductService.getMetadata(category_id, params)
+        .then(function (response) {
+          var meta = response.data.meta;
+          $scope.metadata = meta;
+          $scope.subCategoryCounts = meta.sub_category_counts || {};
+          $scope.currentPage = meta.current_page;
+          $scope.totalPages = meta.total_pages;
+          $scope.pageNumbers = Array.from({ length: $scope.totalPages }, function (_, i) {
+            return i + 1;
+          });
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
 
-    // Load all products for this category
-    ProductService.getAll(category_id)
-      .then(function (response) {
-        $scope.allProducts = response.data;
-        $scope.products = response.data;
-        computeSubCategoryCounts();
-        updatePagination();
-      })
-      .catch(function (error) {
-        $scope.error = error.data?.error || "Failed to load products";
-      })
-      .finally(function () {
-        $scope.loading = false;
-      });
+    loadProducts($scope.currentPage);
 
     // Load sub-categories for the filters sidebar
     SubCategoryService.getByCategory(category_id)
@@ -68,29 +80,15 @@ app.controller(
         console.log(error);
       });
 
-    // Re-filter the product list whenever a sub-category checkbox is toggled.
+    // Re-fetch from the backend whenever a sub-category checkbox is toggled.
     // No sub-categories checked = show everything.
     $scope.onFilterChange = function () {
-      var activeIds = Object.keys($scope.selectedSubCategoryIds).filter(function (id) {
-        return $scope.selectedSubCategoryIds[id];
-      });
-
-      if (activeIds.length === 0) {
-        $scope.products = $scope.allProducts;
-      } else {
-        $scope.products = $scope.allProducts.filter(function (product) {
-          return product.sub_category && activeIds.indexOf(String(product.sub_category.id)) !== -1;
-        });
-      }
-
-      updatePagination();
+      loadProducts(1);
     };
 
-    // Pagination is UI-only: it just moves the highlighted page indicator.
     $scope.goToPage = function (page) {
-      // console.log(page)
       if (page < 1 || page > $scope.totalPages) return;
-      $scope.currentPage = page;
+      loadProducts(page);
     };
 
     // Add to cart
@@ -124,7 +122,7 @@ app.controller(
       // }  
       $scope.product = product
 
-      $location.path("/products/" + product.id);
+      $location.path("/category/:category_id/product/" + product.id);
     };
   },
 );
