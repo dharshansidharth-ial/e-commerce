@@ -121,8 +121,9 @@ app.controller(
       //   return;
       // }  
       $scope.product = product
+      // console.log(product)
 
-      $location.path("/category/:category_id/product/" + product.id);
+      $location.path(`/category/${category_id}/sub_category/${product['sub_category']['id']}/product/${product.id}`);
     };
   },
 );

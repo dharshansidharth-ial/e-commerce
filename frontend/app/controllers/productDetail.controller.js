@@ -15,6 +15,9 @@ app.controller(
     }
 
     const id = $routeParams.id;
+    const category_id = $routeParams.category_id;
+    const sub_category_id = $routeParams.sub_category_id;
+    // console.log(id)
 
     $scope.product = null;
     $scope.reviews = [];
@@ -22,11 +25,12 @@ app.controller(
     $scope.quantity = 1;
     $scope.isCustomer = AuthService.isCustomer();
 
-    ProductService.get(id)
+    ProductService.get(id , category_id , sub_category_id)
       .then(function (response) {
         $scope.product = response.data;
       })
       .catch(function () {
+        // console.log("in productDetailController", $scope.product)
         $scope.error = "Failed to load product";
       });
 
